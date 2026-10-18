@@ -1,0 +1,6 @@
+pnr/runs/
+/sim
+/gls
+/mult.vcd
+.direnv
+web/sim/target/
