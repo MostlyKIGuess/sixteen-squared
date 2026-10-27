@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4-bit array multiplier, RTL to GDSII</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/fonts.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>4-bit array multiplier, RTL to GDSII</h1>
+    <p class="byline">Krish Pandya and Vignesh Vembar, on the SkyWater SKY130 process. Every simulation on this
+      page runs in your browser on our real netlists.</p>
+    <p class="byline"><a href="https://github.com/MostlyKIGuess/sixteen-squared/blob/main/report/report.pdf">Report (PDF)</a>
+      and <a href="https://github.com/MostlyKIGuess/sixteen-squared">source code</a> on GitHub.</p>
+  </header>
+
+  <div id="controls">
+    <div class="control">
+      <span class="label">Netlist</span>
+      <div id="design-picker" class="segmented"></div>
+    </div>
+    <div class="control">
+      <span class="label" title="Transistor speed (typical, slow, fast) and wire load (min, nom, max)">Corner, transistors and wires</span>
+      <div id="corner-picker" class="corners"></div>
+    </div>
+    <div class="control">
+      <span class="label">Clock period <span id="period-value"></span></span>
+      <input id="period" type="range" min="1" max="10" step="0.05">
+    </div>
+  </div>
+
+  <main>
+    <section id="compute">
+      <h2>1. What does it compute?</h2>
+      <p class="lead" id="compute-lead"></p>
+      <div class="pickers">
+        <div class="picker"><span>a</span><div id="a-bits" class="bits"></div><span class="value" id="a-value"></span></div>
+        <div class="picker"><span>b</span><div id="b-bits" class="bits"></div><span class="value" id="b-value"></span></div>
+        <button id="array-play" class="primary">Play the ripple</button>
+      </div>
+      <svg id="array" viewBox="0 0 760 400"></svg>
+      <p class="caption" id="array-caption">Blue wires carry a 1. Play lights each wire when it settles, one full adder
+        per step, so the carry crawls right to left.</p>
+    </section>
+
+    <section id="build">
+      <h2>2. How is the layout built?</h2>
+      <p class="lead">Our final layout, built step by step from the snapshots of the LibreLane run.</p>
+      <div class="split">
+        <div>
+          <canvas id="build-canvas" width="560" height="560"></canvas>
+          <div class="legend" id="build-legend"></div>
+        </div>
+        <div class="side">
+          <div class="buttons">
+            <button id="build-back">Back</button>
+            <button id="build-play" class="primary">Play</button>
+            <button id="build-next">Next</button>
+          </div>
+          <ol id="build-steps"></ol>
+          <p id="build-change" class="change"></p>
+          <p id="build-note" class="note"></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="timing">
+      <h2>3. When does it break?</h2>
+      <p class="lead" id="timing-lead"></p>
+      <div id="timing-progress" class="progress"><div></div></div>
+      <div class="split" id="timing-views">
+        <div>
+          <canvas id="histogram" width="560" height="270"></canvas>
+          <p class="caption" id="histogram-caption"></p>
+        </div>
+        <div class="side">
+          <canvas id="grid" width="300" height="340"></canvas>
+          <p class="readout" id="grid-readout"></p>
+          <p class="caption">Worst case for each new input over all 256 old ones. Click a square to watch it.</p>
+        </div>
+      </div>
+      <table id="corner-table"></table>
+      <p class="caption" id="corner-caption">Minimum clock period at each corner. Simulated is the slowest real
+        transition. STA is LibreLane's sign-off bound minus its 0.25 ns clock uncertainty, and the simulated value
+        stays below it.</p>
+    </section>
+
+    <section id="transition">
+      <h2>4. What happens inside one transition?</h2>
+      <p class="lead" id="transition-lead"></p>
+      <div class="pickers" id="transition-pickers"></div>
+      <div class="chips" id="transition-chips"></div>
+      <div class="pair">
+        <div>
+          <canvas id="wave" width="620" height="360"></canvas>
+          <div class="buttons">
+            <button id="transition-play" class="primary">Play</button>
+            <input id="transition-time" type="range" min="0" max="1000" value="1000">
+          </div>
+        </div>
+        <div>
+          <canvas id="layout" width="420" height="420"></canvas>
+          <div class="legend" id="layout-legend"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cycles">
+      <h2>5. Cycle by cycle</h2>
+      <p class="lead" id="cycles-lead"></p>
+      <div class="chips" id="cycle-presets"></div>
+      <canvas id="cycle-wave" width="1000" height="300"></canvas>
+      <input id="cycle-window" type="range" min="0" max="0" value="0">
+    </section>
+  </main>
+
+  <footer>Built with Rust compiled to WebAssembly. Source, netlists and report in
+    <a href="https://github.com/MostlyKIGuess/sixteen-squared">github.com/MostlyKIGuess/sixteen-squared</a>.</footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
